@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piano Fun & Magic - ¡Aprende Piano Jugando!</title>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandPurple: '#7C3AED',
+                        brandPink: '#EC4899',
+                        brandYellow: '#FBBF24',
+                        brandCyan: '#06B6D4',
+                        brandCoral: '#FF6B6B',
+                        brandDark: '#2E1065',
+                    },
+                    fontFamily: {
+                        heading: ['Fredoka One', 'cursive'],
+                        body: ['Nunito', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        funky: '0px 8px 0px 0px rgba(0, 0, 0, 0.25)',
+                        funkyBtn: '0px 6px 0px 0px #2E1065',
+                        funkyBtnActive: '0px 2px 0px 0px #2E1065',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #F3E8FF;
+            overflow-x: hidden;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .nav-link {
+            position: relative;
+            white-space: nowrap;
+            transition: color 0.25s ease, transform 0.25s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link:focus-visible {
+            transform: translateX(5px);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 100%;
+            bottom: -6px;
+            height: 3px;
+            border-radius: 999px;
+            background: #FBBF24;
+            transition: right 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link:focus-visible::after {
+            right: 0;
+        }
+
+        .nav-menu {
+            display: flex;
+        }
+
+        @media (max-width: 767px) {
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+                width: 100%;
+                margin-top: 0.75rem;
+                padding: 1rem;
+                border-radius: 1rem;
+                background: rgba(46, 16, 101, 0.98);
+                overflow-x: visible;
+            }
+
+            .nav-menu.open {
+                display: flex;
+                animation: slideDown 0.3s ease;
+            }
+
+            .nav-menu .nav-link {
+                display: block;
+                padding: 0.65rem;
+            }
+
+            .nav-menu .nav-link:hover,
+            .nav-menu .nav-link:focus-visible {
+                transform: translateX(8px);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-heading {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        /* Animated Music Notes Background Particles */
+        .floating-note {
+            position: fixed;
+            pointer-events: none;
+            z-index: 50;
+            animation: floatUp 3s ease-out forwards;
+            font-size: 1.8rem;
+            color: #EC4899;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(0.8) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-80px) scale(1.3) rotate(15deg);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-160px) scale(0.6) rotate(-15deg);
+            }
+        }
+
+        /* Key Hover Effects */
+        .white-key {
+            background: linear-gradient(to bottom, #ffffff 0%, #f3f4f6 100%);
+            box-shadow: 0 6px 0 #cbd5e1, 0 10px 10px rgba(0, 0, 0, 0.15);
+            transition: all 0.08s ease;
+        }
+
+        .white-key.active,
+        .white-key:active {
+            background: linear-gradient(to bottom, #e2e8f0 0%, #38bdf8 100%);
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #94a3b8, 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .black-key {
+            background: linear-gradient(to bottom, #1e293b 0%, #0f172a 100%);
+            box-shadow: 0 4px 0 #020617, 0 6px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.08s ease;
+        }
+
+        .black-key.active,
+        .black-key:active {
+            background: linear-gradient(to bottom, #0f172a 0%, #a855f7 100%);
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #020617, 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .learning-active {
+            background: linear-gradient(to bottom, #bbf7d0 0%, #22c55e 100%) !important;
+            border-color: #15803d !important;
+            box-shadow: 0 4px 0 #166534, 0 0 22px rgba(34, 197, 94, 0.9) !important;
+            transform: translateY(4px) scale(1.03);
+            z-index: 30 !important;
+        }
+
+        .manual-note {
+            display: inline-block;
+            min-width: 1.4em;
+            text-align: center;
+            transition: transform 0.25s ease, color 0.25s ease, background-color 0.25s ease;
+        }
+
+        .manual-note.current {
+            color: #4ade80;
+            background: #14532d;
+            border-radius: 0.35rem;
+            transform: scale(1.65);
+            font-weight: 900;
+        }
+
+        .learning-status {
+            min-height: 1.25rem;
+            color: #86efac;
+            font-weight: 800;
+        }
+
+        .learning-error {
+            animation: learningError 0.35s ease;
+        }
+
+        @keyframes learningError {
+            0%,
+            100% {
+                filter: brightness(1);
+                transform: translateY(4px) scale(1.03);
+            }
+
+            50% {
+                filter: brightness(1.7) saturate(1.4);
+                transform: translateY(2px) scale(1.05);
+            }
+        }
+
+        .learning-success {
+            animation: learningSuccess 0.3s ease;
+        }
+
+        @keyframes learningSuccess {
+            50% {
+                filter: brightness(1.35);
+            }
+        }
+
+        /* Wavy Background divider */
+        .wave-bg {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%20%237c3aed' fill-opacity='1' d='M0,192L48,197.3C96,203,192,213,288,192C384,171,480,117,576,128C672,139,768,213,864,224C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .bounce-slow {
+            animation: bounceSlow 3s infinite;
+        }
+
+        @keyframes bounceSlow {
+
+            0%,
+            100% {
+                transform: translateY(-5%);
+            }
+
+            50% {
+                transform: translateY(5%);
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #2E1065;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #FBBF24;
+            border-radius: 6px;
+            border: 3px solid #2E1065;
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 antialiased selection:bg-brandYellow selection:text-brandDark">
+
+    <!-- NAV BAR -->
+    <nav class="sticky top-0 z-40 bg-brandDark/90 backdrop-blur-md border-b-4 border-brandYellow py-3 px-4 md:px-8">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-y-3">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="playMagicChord()">
+                <div
+                    class="w-11 h-11 bg-brandYellow rounded-2xl flex items-center justify-center text-brandDark text-2xl shadow-funky transform -rotate-6 hover:rotate-0 transition-transform">
+                    <i class="fa-solid font-bold fa-music"></i>
+                </div>
+                <span class="text-2xl md:text-3xl font-heading text-white tracking-wider">
+                    Piano <span class="text-brandYellow">Fun</span> & <span class="text-brandPink">Magic</span>
+                </span>
+            </div>
+
+            <button id="menuToggle" class="md:hidden text-brandYellow text-2xl p-2" aria-label="Abrir menú"
+                aria-expanded="false">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- Navigation Links -->
+            <div id="mobileNav"
+                class="nav-menu order-3 md:order-none w-full md:w-auto items-center space-x-6 text-white font-bold text-lg overflow-x-auto pb-1 md:pb-0">
+                <a href="#piano" class="nav-link hover:text-brandYellow"><i class="fa-solid fa-keyboard mr-1"></i>
+                    Piano</a>
+                <a href="#ventajas" class="nav-link hover:text-brandCyan"><i class="fa-solid fa-star mr-1"></i>
+                    Ventajas</a>
+                <a href="#quiz" class="nav-link hover:text-brandPink"><i class="fa-solid fa-gamepad mr-1"></i> Quiz</a>
+                <a href="#temario" class="nav-link hover:text-brandYellow"><i class="fa-solid fa-book-open mr-1"></i>
+                    Temario</a>
+                <a href="#precios" class="nav-link hover:text-brandCoral"><i class="fa-solid fa-tag mr-1"></i>
+                    Precios</a>
+            </div>
+
+            <!-- Action Button & Ambient Sound Toggle -->
+            <div class="flex items-center space-x-3">
+                <button id="ambientToggleBtn" onclick="toggleAmbientMusic()"
+                    class="bg-purple-900 hover:bg-purple-800 text-brandYellow p-2 md:px-4 md:py-2 rounded-xl border-2 border-brandYellow font-bold flex items-center space-x-2 transition-all transform active:scale-95 shadow-md">
+                    <i id="ambientIcon" class="fa-solid fa-volume-xmark text-lg"></i>
+                    <span class="hidden md:inline text-sm">Fondo Mágico</span>
+                </button>
+                <a href="#precios"
+                    class="hidden sm:inline-flex bg-brandPink hover:bg-pink-500 text-white font-heading px-4 py-2 rounded-2xl shadow-funkyBtn active:shadow-funkyBtnActive border-2 border-brandDark transition-all hover:-translate-y-0.5">
+                    ¡Inscribirme!
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION WITH INTERACTIVE PIANO -->
+    <header id="piano"
+        class="relative bg-gradient-to-b from-brandPurple to-indigo-900 text-white pt-8 pb-16 px-4 overflow-hidden">
+        <!-- Floating decor elements -->
+        <div class="absolute top-10 left-10 text-yellow-300 opacity-30 text-6xl bounce-slow"><i
+                class="fa-solid fa-music"></i></div>
+        <div class="absolute top-20 right-12 text-pink-400 opacity-30 text-7xl bounce-slow"
+            style="animation-delay: 1s;"><i class="fa-solid fa-note-sticky"></i></div>
+        <div class="absolute bottom-10 left-1/4 text-cyan-300 opacity-20 text-5xl bounce-slow"
+            style="animation-delay: 1.5s;"><i class="fa-solid fa-drum"></i></div>
+
+        <div class="max-w-6xl mx-auto text-center relative z-10">
+            <!-- Badge -->
+            <div
+                class="inline-block bg-brandYellow text-brandDark font-extrabold px-6 py-2 rounded-full border-2 border-brandDark text-sm md:text-base uppercase tracking-wider shadow-md mb-4 transform -rotate-1 hover:rotate-1 transition-transform">
+                ✨ ¡Aprender piano nunca fue tan divertido! 🎶
+            </div>
+
+            <!-- Main Heading -->
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-heading mb-4 text-white drop-shadow-lg leading-tight">
+                Toca tus canciones favoritas desde el <span
+                    class="text-brandYellow underline decoration-wavy decoration-brandPink">primer día</span>
+            </h1>
+
+            <p class="text-lg md:text-2xl text-purple-100 max-w-3xl mx-auto mb-8 font-semibold">
+                Sin teoría aburrida ni aburridos ejercicios antiguos. Un método 100% práctico, con juegos, retos y
+                canciones modernas.
+            </p>
+
+            <!-- INTERACTIVE PIANO CONTAINER -->
+            <div
+                class="bg-brandDark/90 p-4 md:p-8 rounded-3xl border-4 border-brandYellow shadow-2xl max-w-4xl mx-auto my-6 relative">
+
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-4 px-2 gap-2">
+                    <div class="text-left">
+                        <span class="text-brandYellow font-heading text-lg md:text-xl block">
+                            🎹 ¡Pruébalo ahora mismo!
+                        </span>
+                        <span class="text-xs md:text-sm text-purple-200">
+                            Haz clic con el mouse o usa las teclas de tu teclado: <b>[A] [S] [D] [F] [G] [H] [J] [K]</b>
+                        </span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span
+                            class="text-xs bg-purple-800 text-purple-200 px-3 py-1 rounded-full border border-purple-600">
+                            Modo: <b class="text-brandCyan">Sintetizador WebAudio</b>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- PIANO KEYS WRAPPER -->
+                <div
+                    class="relative flex justify-center items-start select-none py-2 px-1 bg-slate-900 rounded-2xl border-2 border-purple-800 overflow-x-auto">
+                    <!-- White and Black keys rendered here dynamically or structured -->
+                    <div id="pianoKeyboard" class="flex relative justify-center min-w-[320px] md:min-w-[600px]">
+                        <!-- C4 -->
+                        <div data-note="C4" data-key="a"
+                            class="white-key relative w-10 sm:w-14 h-48 sm:h-56 rounded-b-xl cursor-pointer flex flex-col justify-end items-center pb-3 border border-slate-300 z-10">
+                            <span class="text-xs font-bold text-slate-500 uppercase">A</span>
+                            <span class="text-sm font-heading text-brandPurple">DO</span>
+                        </div>
+                        <!-- C#4 -->
+                        <div data-note="C#4" data-key="w"
+                            class="black-key absolute w-6 sm:w-8 h-28 sm:h-36 rounded-b-md cursor-pointer flex flex-col justify-end items-center pb-2 z-20"
+                            style="left: calc(100% / 8 * 1 - 12px);">
+                            <span class="text-[10px] font-bold text-slate-300">W</span>
+                        </div>
+
+                        <!-- D4 -->
+                        <div data-note="D4" data-key="s"
+                            class="white-key relative w-10 sm:w-14 h-48 sm:h-56 rounded-b-xl cursor-pointer flex flex-col justify-end items-center pb-3 border border-slate-300 z-10">
+                            <span class="text-xs font-bold text-slate-500 uppercase">S</span>
+                            <span class="text-sm font-heading text-brandPurple">RE</span>
+                        </div>
+                        <!-- D#4 -->
+                        <div data-note="D#4" data-key="e"
+                            class="black-key absolute w-6 sm:w-8 h-28 sm:h-36 rounded-b-md cursor-pointer flex flex-col justify-end items-center pb-2 z-20"
+                            style="left: calc(100% / 8 * 2 - 12px);">
+                            <span class="text-[10px] font-bold text-slate-300">E</span>
+                        </div>
+
+                        <!-- E4 -->
+                        <div data-note="E4" data-key="d"
+                            class="white-key relative w-10 sm:w-14 h-48 sm:h-56 rounded-b-xl cursor-pointer flex flex-col justify-end items-center pb-3 border border-slate-300 z-10">
+                            <span class="text-xs font-bold text-slate-500 uppercase">D</span>
+                            <span class="text-sm font-heading text-brandPurple">MI</span>
+                        </div>
+
+                        <!-- F4 -->
+                        <div data-note="F4" data-key="f"
+                            class="white-key relative w-10 sm:w-14 h-48 sm:h-56 rounded-b-xl cursor-pointer flex flex-col justify-end items-center pb-3 border border-slate-300 z-10">
+                            <span class="text-xs font-bold text-slate-500 uppercase">F</span>
+                            <span class="text-sm font-heading text-brandPurple">FA</span>
+                        </div>
+                        <!-- F#4 -->
+                        <div data-note="F#4" data-key="t"
+                            class="black-key absolute w-6 sm:w-8 h-28 sm:h-36 rounded-b-md cursor-pointer flex flex-col justify-end items-center pb-2 z-20"
+                            style="left: calc(100% / 8 * 4 - 12px);">
+                            <span class="text-[10px] font-bold text-slate-300">T</span>
+                        </div>
+
+                        <!-- G4 -->
+                        <div data-note="G4" data-key="g"
+                            class="white-key relative w-10 sm:w-14 h-48 sm:h-56 rounded-b-xl cursor-pointer flex flex-col justify-end items-center pb-3 border border-slate-300 z-10">
+                            <span class="text-xs font-bold text-slate-500 uppercase">G</span>
+                            <span class="text-sm font-heading text-brandPurple">SOL</span>
+                        </div>
+                        <!-- G#4 -->
+                        <div data-note="G#4" data-key="y"
+                            class="black-key absolute w-6 sm:w-8 h-28 sm:h-36 rounded-b-md cursor-pointer flex flex-col justify-end items-center pb-2 z-20"
+                            style="left: calc(100% / 8 * 5 - 12px);">
+                            <span class="text-[10px] font-bold text-slate-300">Y</span>
+                        </div>
+
+                        <!-- A4 -->
+                        <div data-note="A4" data-key="h"
+                            class="white-key relative w-10 sm:w-14 h-48 sm:h-56 rounded-b-xl cursor-pointer flex flex-col justify-end items-center pb-3 border border-slate-300 z-10">
+                            <span class="text-xs font-bold text-slate-500 uppercase">H</span>
+                            <span class="text-sm font-heading text-brandPurple">LA</span>
+                        </div>
+                        <!-- A#4 -->
+                        <div data-note="A#4" data-key="u"
+                            class="black-key absolute w-6 sm:w-8 h-28 sm:h-36 rounded-b-md cursor-pointer flex flex-col justify-end items-center pb-2 z-20"
+                            style="left: calc(100% / 8 * 6 - 12px);">
+                            <span class="text-[10px] font-bold text-slate-300">U</span>
+                        </div>
+
+                        <!-- B4 -->
+                        <div data-note="B4" data-key="j"
+                            class="white-key relative w-10 sm:w-14 h-48 sm:h-56 rounded-b-xl cursor-pointer flex flex-col justify-end items-center pb-3 border border-slate-300 z-10">
+                            <span class="text-xs font-bold text-slate-500 uppercase">J</span>
+                            <span class="text-sm font-heading text-brandPurple">SI</span>
+                        </div>
+
+                        <!-- C5 -->
+                        <div data-note="C5" data-key="k"
+                            class="white-key relative w-10 sm:w-14 h-48 sm:h-56 rounded-b-xl cursor-pointer flex flex-col justify-end items-center pb-3 border border-slate-300 z-10">
+                            <span class="text-xs font-bold text-slate-500 uppercase">K</span>
+                            <span class="text-sm font-heading text-brandPurple">DO²</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Easy Song Assistant -->
+                <div
+                    class="mt-4 pt-3 border-t border-purple-800 flex flex-wrap justify-center items-center gap-2 text-xs md:text-sm">
+                    <span class="text-brandYellow font-bold">💡 Prueba tocar esta secuencia:</span>
+                    <button onclick="startGuidedPractice(['C4','C4','G4','G4','A4','A4','G4'])"
+                        class="bg-green-700 hover:bg-green-600 text-white px-3 py-1 rounded-lg border border-green-400 transition-colors">
+                        ⭐ Aprender Estrellita
+                    </button>
+                    <span class="text-purple-300">O presiona manualmente:
+                        <code id="manualSequence" class="bg-black/40 px-2 py-0.5 rounded text-brandYellow">
+                            <span class="manual-note" data-manual-key="a">A</span> -
+                            <span class="manual-note" data-manual-key="a">A</span> -
+                            <span class="manual-note" data-manual-key="g">G</span> -
+                            <span class="manual-note" data-manual-key="g">G</span> -
+                            <span class="manual-note" data-manual-key="h">H</span> -
+                            <span class="manual-note" data-manual-key="h">H</span> -
+                            <span class="manual-note" data-manual-key="g">G</span>
+                        </code>
+                    </span>
+                    <span id="learningStatus" class="learning-status basis-full"></span>
+                </div>
+            </div>
+
+            <!-- Quick CTA -->
+            <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+                <a href="#precios"
+                    class="bg-brandYellow hover:bg-yellow-300 text-brandDark font-heading text-xl px-8 py-4 rounded-2xl border-4 border-brandDark shadow-funky hover:-translate-y-1 transition-all flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-rocket"></i>
+                    <span>¡EMPEZAR CURSO HOY!</span>
+                </a>
+                <a href="#quiz"
+                    class="bg-brandCyan hover:bg-cyan-300 text-brandDark font-heading text-xl px-8 py-4 rounded-2xl border-4 border-brandDark shadow-funky hover:-translate-y-1 transition-all flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-gamepad"></i>
+                    <span>Hacer el Quiz Musical</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- BENEFITS / ADVANTAGES SECTION -->
+    <section id="ventajas" class="py-16 px-4 max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+            <span class="text-brandPink font-heading text-xl uppercase tracking-widest block mb-2">¿Por qué nuestro
+                método funciona?</span>
+            <h2 class="text-3xl md:text-5xl font-heading text-brandDark">
+                Piano sin aburrimiento, <span class="text-brandPurple">100% Diversión</span>
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Card 1 -->
+            <div
+                class="bg-white p-6 rounded-3xl border-4 border-brandDark shadow-funky hover:-translate-y-2 transition-transform relative group overflow-hidden">
+                <div
+                    class="w-16 h-16 bg-brandYellow rounded-2xl border-2 border-brandDark flex items-center justify-center text-3xl mb-4 group-hover:rotate-12 transition-transform">
+                    🎮
+                </div>
+                <h3 class="text-2xl font-heading text-brandDark mb-2">Aprende Jugando</h3>
+                <p class="text-slate-600 font-medium">
+                    Convertimos la práctica en mini-retos interactivos y videojuegos musicales que te mantendrán
+                    motivado todos los días.
+                </p>
+            </div>
+
+            <!-- Card 2 -->
+            <div
+                class="bg-white p-6 rounded-3xl border-4 border-brandDark shadow-funky hover:-translate-y-2 transition-transform relative group overflow-hidden">
+                <div
+                    class="w-16 h-16 bg-brandPink rounded-2xl border-2 border-brandDark flex items-center justify-center text-3xl text-white mb-4 group-hover:rotate-12 transition-transform">
+                    🚫📖
+                </div>
+                <h3 class="text-2xl font-heading text-brandDark mb-2">Sin Teoría Aburrida</h3>
+                <p class="text-slate-600 font-medium">
+                    Olvídate de memorizar partituras complejas desde el día uno. Aprenderás por oído, ritmo y patrones
+                    intuitivos visuales.
+                </p>
+            </div>
+
+            <!-- Card 3 -->
+            <div
+                class="bg-white p-6 rounded-3xl border-4 border-brandDark shadow-funky hover:-translate-y-2 transition-transform relative group overflow-hidden">
+                <div
+                    class="w-16 h-16 bg-brandCyan rounded-2xl border-2 border-brandDark flex items-center justify-center text-3xl text-white mb-4 group-hover:rotate-12 transition-transform">
+                    🎧
+                </div>
+                <h3 class="text-2xl font-heading text-brandDark mb-2">Tus Canciones Top</h3>
+                <p class="text-slate-600 font-medium">
+                    Desde pop moderno y música de películas hasta canciones virales. Toca la música que realmente te
+                    gusta escuchar.
+                </p>
+            </div>
+
+            <!-- Card 4 -->
+            <div
+                class="bg-white p-6 rounded-3xl border-4 border-brandDark shadow-funky hover:-translate-y-2 transition-transform relative group overflow-hidden">
+                <div
+                    class="w-16 h-16 bg-brandPurple rounded-2xl border-2 border-brandDark flex items-center justify-center text-3xl text-white mb-4 group-hover:rotate-12 transition-transform">
+                    🌈
+                </div>
+                <h3 class="text-2xl font-heading text-brandDark mb-2">Para Todas las Edades</h3>
+                <p class="text-slate-600 font-medium">
+                    Diseñado para niños desde 7 años, jóvenes y adultos con alma de niños. ¡Nunca es tarde para sonar
+                    genial!
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERACTIVE QUIZ / MINI-GAME SECTION -->
+    <section id="quiz" class="py-16 px-4 bg-gradient-to-r from-purple-800 to-indigo-900 text-white relative">
+        <div
+            class="max-w-4xl mx-auto bg-brandDark border-4 border-brandYellow rounded-3xl p-6 md:p-10 shadow-2xl relative">
+            <div
+                class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-brandYellow text-brandDark font-heading px-6 py-2 rounded-full border-2 border-brandDark uppercase tracking-wider text-sm shadow-md">
+                🎮 Minijuego Interactivo
+            </div>
+
+            <div class="text-center mt-2 mb-8">
+                <h2 class="text-3xl md:text-5xl font-heading text-white">¿Qué tipo de pianista eres?</h2>
+                <p class="text-purple-200 mt-2">Responde 3 preguntas rápidas y descubre tu superpoder musical secret.
+                </p>
+            </div>
+
+            <!-- QUIZ CONTAINER -->
+            <div id="quizBox" class="bg-purple-950/70 p-6 rounded-2xl border-2 border-purple-800">
+                <!-- Question 1 -->
+                <div id="q1" class="quiz-step">
+                    <h3 class="text-2xl font-heading text-brandYellow mb-4">1. ¿Qué música te hace mover los pies de
+                        inmediato?</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button onclick="answerQuiz(1, 'pop')"
+                            class="p-4 bg-purple-900 hover:bg-brandPurple border-2 border-purple-600 rounded-xl font-bold text-left hover:scale-[1.02] transition-all flex items-center space-x-3">
+                            <span class="text-2xl">🎤</span>
+                            <span>Éxitos Pop y canciones virales de TikTok</span>
+                        </button>
+                        <button onclick="answerQuiz(1, 'epic')"
+                            class="p-4 bg-purple-900 hover:bg-brandPurple border-2 border-purple-600 rounded-xl font-bold text-left hover:scale-[1.02] transition-all flex items-center space-x-3">
+                            <span class="text-2xl">🎬</span>
+                            <span>Bandas sonoras de Películas y Videojuegos</span>
+                        </button>
+                        <button onclick="answerQuiz(1, 'relax')"
+                            class="p-4 bg-purple-900 hover:bg-brandPurple border-2 border-purple-600 rounded-xl font-bold text-left hover:scale-[1.02] transition-all flex items-center space-x-3">
+                            <span class="text-2xl">🌙</span>
+                            <span>Melodías suaves para relajarme y pensar</span>
+                        </button>
+                        <button onclick="answerQuiz(1, 'rock')"
+                            class="p-4 bg-purple-900 hover:bg-brandPurple border-2 border-purple-600 rounded-xl font-bold text-left hover:scale-[1.02] transition-all flex items-center space-x-3">
+                            <span class="text-2xl">⚡</span>
+                            <span>Rock potente y ritmos llenos de energía</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question 2 (Hidden initially) -->
+                <div id="q2" class="quiz-step hidden">
+                    <h3 class="text-2xl font-heading text-brandCyan mb-4">2. Cuando ves un piano, ¿qué es lo primero que
+                        quieres hacer?</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button onclick="answerQuiz(2, 'show')"
+                            class="p-4 bg-purple-900 hover:bg-brandCyan hover:text-brandDark border-2 border-purple-600 rounded-xl font-bold text-left hover:scale-[1.02] transition-all flex items-center space-x-3">
+                            <span class="text-2xl">😎</span>
+                            <span>Tocar una canción genial para impresionar a mis amigos</span>
+                        </button>
+                        <button onclick="answerQuiz(2, 'create')"
+                            class="p-4 bg-purple-900 hover:bg-brandCyan hover:text-brandDark border-2 border-purple-600 rounded-xl font-bold text-left hover:scale-[1.02] transition-all flex items-center space-x-3">
+                            <span class="text-2xl">🔮</span>
+                            <span>Inventar mis propias canciones y acordes locos</span>
+                        </button>
+                        <button onclick="answerQuiz(2, 'fast')"
+                            class="p-4 bg-purple-900 hover:bg-brandCyan hover:text-brandDark border-2 border-purple-600 rounded-xl font-bold text-left hover:scale-[1.02] transition-all flex items-center space-x-3">
+                            <span class="text-2xl">⚡</span>
+                            <span>Aprender a mover las manos super rápido</span>
+                        </button>
+                        <button onclick="answerQuiz(2, 'chill')"
+                            class="p-4 bg-purple-900 hover:bg-brandCyan hover:text-brandDark border-2 border-purple-600 rounded-xl font-bold text-left hover:scale-[1.02] transition-all flex items-center space-x-3">
+                            <span class="text-2xl">☕</span>
+                            <span>Disfrutar el sonido dulce y tener un momento de paz</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question 3 (Hidden) -->
+                <div id="q3" class="quiz-step hidden">
+                    <h3 class="text-2xl font-heading text-brandPink mb-4">3. ¿Cuál es tu superpoder ideal al aprender?
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button onclick="finishQuiz('HitMaker')"
+                            class="p-4 bg-purple-900 hover:bg-brandPink border-2 border-purple-600 rounded-xl font-bold text-left hover:scale-[1.02] transition-all flex items-center space-x-3">
+                            <span class="text-2xl">🚀</span>
+                            <span>Aprender una canción en menos de 10 minutos</span>
+                        </button>
+                        <button onclick="finishQuiz('OidoMagico')"
+                            class="p-4 bg-purple-900 hover:bg-brandPink border-2 border-purple-600 rounded-xl font-bold text-left hover:scale-[1.02] transition-all flex items-center space-x-3">
+                            <span class="text-2xl">👂</span>
+                            <span>Sacar cualquier canción solo con escucharla</span>
+                        </button>
+                        <button onclick="finishQuiz('Compositor')"
+                            class="p-4 bg-purple-900 hover:bg-brandPink border-2 border-purple-600 rounded-xl font-bold text-left hover:scale-[1.02] transition-all flex items-center space-x-3">
+                            <span class="text-2xl">🎼</span>
+                            <span>Crear música para películas o juegos</span>
+                        </button>
+                        <button onclick="finishQuiz('Virtuoso')"
+                            class="p-4 bg-purple-900 hover:bg-brandPink border-2 border-purple-600 rounded-xl font-bold text-left hover:scale-[1.02] transition-all flex items-center space-x-3">
+                            <span class="text-2xl">🔥</span>
+                            <span>Tocar solos espectaculares con las dos manos</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Result Box (Hidden) -->
+                <div id="quizResult" class="hidden text-center py-6">
+                    <div class="text-6xl mb-4" id="resultEmoji">🎹</div>
+                    <h3 class="text-3xl md:text-4xl font-heading text-brandYellow mb-2" id="resultTitle">Pianista
+                        Estrella</h3>
+                    <p class="text-lg text-purple-100 max-w-xl mx-auto mb-6" id="resultDesc">
+                        Tienes un talento natural para conectar con el ritmo y la emoción de las canciones populares.
+                        ¡Con nuestro curso aprenderás a dominar el teclado en tiempo récord!
+                    </p>
+                    <button onclick="resetQuiz()"
+                        class="bg-brandPink text-white font-heading px-6 py-3 rounded-xl border-2 border-white hover:bg-pink-600 transition-colors mr-2">
+                        🔄 Repetir Quiz
+                    </button>
+                    <a href="#precios"
+                        class="inline-block bg-brandYellow text-brandDark font-heading px-6 py-3 rounded-xl border-2 border-brandDark hover:bg-yellow-300 transition-colors">
+                        ✨ Ver Plan Sugerido
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODULES / SYLLABUS SECTION -->
+    <section id="temario" class="py-16 px-4 max-w-5xl mx-auto">
+        <div class="text-center mb-12">
+            <span class="text-brandPurple font-heading text-xl uppercase tracking-widest block mb-2">Plan de
+                Aprendizaje</span>
+            <h2 class="text-3xl md:text-5xl font-heading text-brandDark">
+                Módulos del Curso <span class="text-brandPink">Mágico</span>
+            </h2>
+            <p class="text-slate-600 font-semibold mt-2">Paso a paso, desde cero absoluto hasta sonar como un
+                profesional.</p>
+        </div>
+
+        <div class="space-y-4">
+            <!-- Module 1 -->
+            <div class="bg-white border-4 border-brandDark rounded-2xl overflow-hidden shadow-funky">
+                <button onclick="toggleAccordion('mod1')"
+                    class="w-full p-6 text-left font-heading text-xl md:text-2xl text-brandDark bg-amber-100 flex justify-between items-center hover:bg-amber-200 transition-colors">
+                    <span class="flex items-center space-x-3">
+                        <span
+                            class="bg-brandYellow text-brandDark px-3 py-1 rounded-xl text-base border-2 border-brandDark">Módulo
+                            1</span>
+                        <span>Despegue Musical: Primeros Acordes y Ritmos</span>
+                    </span>
+                    <i id="icon-mod1" class="fa-solid fa-chevron-down transition-transform"></i>
+                </button>
+                <div id="mod1"
+                    class="hidden p-6 bg-white border-t-2 border-brandDark space-y-3 font-medium text-slate-700">
+                    <p class="flex items-center"><i class="fa-solid fa-circle-check text-brandPurple mr-3"></i>
+                        Conociendo tu teclado sin miedo y postura relajada.</p>
+                    <p class="flex items-center"><i class="fa-solid fa-circle-check text-brandPurple mr-3"></i> Tu
+                        primera melodía completa en solo 15 minutos.</p>
+                    <p class="flex items-center"><i class="fa-solid fa-circle-check text-brandPurple mr-3"></i> El truco
+                        de los 3 acordes para tocar 20 canciones famosas.</p>
+                </div>
+            </div>
+
+            <!-- Module 2 -->
+            <div class="bg-white border-4 border-brandDark rounded-2xl overflow-hidden shadow-funky">
+                <button onclick="toggleAccordion('mod2')"
+                    class="w-full p-6 text-left font-heading text-xl md:text-2xl text-brandDark bg-cyan-100 flex justify-between items-center hover:bg-cyan-200 transition-colors">
+                    <span class="flex items-center space-x-3">
+                        <span
+                            class="bg-brandCyan text-white px-3 py-1 rounded-xl text-base border-2 border-brandDark">Módulo
+                            2</span>
+                        <span>Independencia de Manos: ¡El Superpoder!</span>
+                    </span>
+                    <i id="icon-mod2" class="fa-solid fa-chevron-down transition-transform"></i>
+                </button>
+                <div id="mod2"
+                    class="hidden p-6 bg-white border-t-2 border-brandDark space-y-3 font-medium text-slate-700">
+                    <p class="flex items-center"><i class="fa-solid fa-circle-check text-brandCyan mr-3"></i> Ejercicios
+                        tipo juego para que la mano izquierda y derecha no se confundan.</p>
+                    <p class="flex items-center"><i class="fa-solid fa-circle-check text-brandCyan mr-3"></i>
+                        Acompañamientos modernos y arpegios divertidos.</p>
+                    <p class="flex items-center"><i class="fa-solid fa-circle-check text-brandCyan mr-3"></i>
+                        Interpretación de bandas sonoras populares (Disney, Mario, Harry Potter).</p>
+                </div>
+            </div>
+
+            <!-- Module 3 -->
+            <div class="bg-white border-4 border-brandDark rounded-2xl overflow-hidden shadow-funky">
+                <button onclick="toggleAccordion('mod3')"
+                    class="w-full p-6 text-left font-heading text-xl md:text-2xl text-brandDark bg-pink-100 flex justify-between items-center hover:bg-pink-200 transition-colors">
+                    <span class="flex items-center space-x-3">
+                        <span
+                            class="bg-brandPink text-white px-3 py-1 rounded-xl text-base border-2 border-brandDark">Módulo
+                            3</span>
+                        <span>Oído Mágico e Improvisación</span>
+                    </span>
+                    <i id="icon-mod3" class="fa-solid fa-chevron-down transition-transform"></i>
+                </button>
+                <div id="mod3"
+                    class="hidden p-6 bg-white border-t-2 border-brandDark space-y-3 font-medium text-slate-700">
+                    <p class="flex items-center"><i class="fa-solid fa-circle-check text-brandPink mr-3"></i> Cómo sacar
+                        canciones de oído sin buscar tutoriales.</p>
+                    <p class="flex items-center"><i class="fa-solid fa-circle-check text-brandPink mr-3"></i> Escalas
+                        mágicas para improvisar tus propios solos.</p>
+                    <p class="flex items-center"><i class="fa-solid fa-circle-check text-brandPink mr-3"></i> Creación
+                        de tu propio tema musical final.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="py-16 px-4 bg-brandYellow/30 border-y-4 border-brandDark">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-5xl font-heading text-brandDark">Lo que dicen nuestros alumnos 🎶</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-3xl border-4 border-brandDark shadow-funky relative">
+                    <div class="text-yellow-400 text-xl mb-3">⭐⭐⭐⭐⭐</div>
+                    <p class="text-slate-700 font-semibold mb-4">"Pensé que aprender piano sería aburrido para mi hijo
+                        de 9 años, ¡pero le encanta! En dos semanas ya estaba tocando el tema de Super Mario."</p>
+                    <div class="flex items-center space-x-3">
+                        <div
+                            class="w-10 h-10 bg-brandPurple rounded-full flex items-center justify-center text-white font-bold">
+                            M</div>
+                        <div>
+                            <h4 class="font-heading text-brandDark text-sm">María L.</h4>
+                            <span class="text-xs text-slate-500">Mamá de Mateo (9 años)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl border-4 border-brandDark shadow-funky relative">
+                    <div class="text-yellow-400 text-xl mb-3">⭐⭐⭐⭐⭐</div>
+                    <p class="text-slate-700 font-semibold mb-4">"Tengo 28 años y siempre quise tocar. Las explicaciones
+                        son súper visuales y el piano interactivo de la plataforma ayuda muchísimo a practicar."</p>
+                    <div class="flex items-center space-x-3">
+                        <div
+                            class="w-10 h-10 bg-brandPink rounded-full flex items-center justify-center text-white font-bold">
+                            C</div>
+                        <div>
+                            <h4 class="font-heading text-brandDark text-sm">Carlos R.</h4>
+                            <span class="text-xs text-slate-500">Alumno Adulto</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl border-4 border-brandDark shadow-funky relative">
+                    <div class="text-yellow-400 text-xl mb-3">⭐⭐⭐⭐⭐</div>
+                    <p class="text-slate-700 font-semibold mb-4">"El minijuego de ritmos y el soporte de los profesores
+                        es genial. Aprendes rápido y sin la frustración de la teoría tradicional."</p>
+                    <div class="flex items-center space-x-3">
+                        <div
+                            class="w-10 h-10 bg-brandCyan rounded-full flex items-center justify-center text-white font-bold">
+                            S</div>
+                        <div>
+                            <h4 class="font-heading text-brandDark text-sm">Sofia & Papa</h4>
+                            <span class="text-xs text-slate-500">Aprendizaje en familia</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING & CALL TO ACTION SECTION -->
+    <section id="precios" class="py-20 px-4 max-w-5xl mx-auto">
+        <div class="text-center mb-12">
+            <span
+                class="bg-brandPink text-white font-heading px-4 py-1 rounded-full text-sm border-2 border-brandDark uppercase inline-block mb-3 animate-pulse">
+                🔥 ¡Oferta de Lanzamiento Especial!
+            </span>
+            <h2 class="text-4xl md:text-6xl font-heading text-brandDark">Comienza tu Aventura Musical</h2>
+            <p class="text-lg text-slate-600 font-semibold mt-2">Acceso de por vida + Actualizaciones constantes</p>
+        </div>
+
+        <div
+            class="max-w-lg mx-auto bg-white border-4 border-brandDark rounded-3xl p-8 pt-16 shadow-funky relative overflow-hidden">
+            <div
+                class="absolute top-4 left-1/2 -translate-x-1/2 bg-brandYellow text-brandDark font-heading py-2 px-6 rounded-full border-2 border-brandDark text-center text-sm whitespace-nowrap shadow-md">
+                ¡50% OFF!
+            </div>
+
+            <div class="text-center mb-6">
+                <h3 class="text-3xl font-heading text-brandDark">Plan Piano Fun VIP</h3>
+                <div class="mt-4 flex justify-center items-baseline space-x-2">
+                    <span class="text-slate-400 line-through text-2xl font-bold">$98 USD</span>
+                    <span class="text-5xl md:text-6xl font-heading text-brandPurple">$49</span>
+                    <span class="text-slate-600 font-bold">USD</span>
+                </div>
+                <span
+                    class="text-xs text-emerald-600 font-bold bg-emerald-100 px-3 py-1 rounded-full inline-block mt-2">
+                    Pago único · Acceso Ilimitado
+                </span>
+            </div>
+
+            <!-- Features list -->
+            <ul class="space-y-4 mb-8 text-slate-700 font-semibold text-sm md:text-base">
+                <li class="flex items-center space-x-3">
+                    <i class="fa-solid fa-circle-check text-brandPink text-xl"></i>
+                    <span>+50 Lecciones en video HD interactivas.</span>
+                </li>
+                <li class="flex items-center space-x-3">
+                    <i class="fa-solid fa-circle-check text-brandPink text-xl"></i>
+                    <span>Acceso al simulador de piano virtual 24/7.</span>
+                </li>
+                <li class="flex items-center space-x-3">
+                    <i class="fa-solid fa-circle-check text-brandPink text-xl"></i>
+                    <span>Librería de partituras fáciles y guías en PDF.</span>
+                </li>
+                <li class="flex items-center space-x-3">
+                    <i class="fa-solid fa-circle-check text-brandPink text-xl"></i>
+                    <span>Comunidad exclusiva de estudiantes.</span>
+                </li>
+                <li class="flex items-center space-x-3">
+                    <i class="fa-solid fa-circle-check text-brandPink text-xl"></i>
+                    <span>Certificado Mágico al completar el curso.</span>
+                </li>
+            </ul>
+
+            <!-- CTA Button -->
+            <button onclick="triggerEnrollment()"
+                class="w-full bg-brandYellow hover:bg-yellow-300 text-brandDark font-heading text-2xl py-4 rounded-2xl border-4 border-brandDark shadow-funky hover:-translate-y-1 transition-all flex items-center justify-center space-x-3 group">
+                <span>¡QUIERO MI ACCESO AHORA!</span>
+                <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+            </button>
+
+            <div class="text-center mt-4">
+                <span class="text-xs text-slate-500 font-medium">
+                    🔒 Garantía de 7 días. Si no te diviertes, te devolvemos el 100% de tu dinero.
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-brandDark text-white py-12 px-4 border-t-4 border-brandYellow">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center space-x-3">
+                <div
+                    class="w-10 h-10 bg-brandYellow rounded-xl flex items-center justify-center text-brandDark text-xl font-bold">
+                    <i class="fa-solid fa-music"></i>
+                </div>
+                <span class="text-2xl font-heading tracking-wider">
+                    Piano <span class="text-brandYellow">Fun</span> & <span class="text-brandPink">Magic</span>
+                </span>
+            </div>
+
+            <p class="text-purple-300 text-sm font-medium text-center">
+                © 2026 Piano Fun & Magic. Todos los derechos reservados. ¡Diseñado para llenar el mundo de música!
+            </p>
+
+            <div class="flex space-x-4 text-2xl text-brandYellow">
+                <a href="#" class="hover:text-brandPink transition-colors"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#" class="hover:text-brandPink transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="hover:text-brandPink transition-colors"><i class="fa-brands fa-tiktok"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* WEB AUDIO API SYNTHESIZER ENGINE */
+        let audioCtx = null;
+
+        // Note Frequencies Table (Hz)
+        const noteFrequencies = {
+            'C4': 261.63,
+            'C#4': 277.18,
+            'D4': 293.66,
+            'D#4': 311.13,
+            'E4': 329.63,
+            'F4': 349.23,
+            'F#4': 369.99,
+            'G4': 392.00,
+            'G#4': 415.30,
+            'A4': 440.00,
+            'A#4': 466.16,
+            'B4': 493.88,
+            'C5': 523.25
+        };
+
+        // Keyboard Key mapping
+        const keyboardMapping = {
+            'a': 'C4',
+            'w': 'C#4',
+            's': 'D4',
+            'e': 'D#4',
+            'd': 'E4',
+            'f': 'F4',
+            't': 'F#4',
+            'g': 'G4',
+            'y': 'G#4',
+            'h': 'A4',
+            'u': 'A#4',
+            'j': 'B4',
+            'k': 'C5'
+        };
+
+        // Initialize Web Audio Context on first user interaction
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // Play Note function using WebAudio synthesizer
+        function playNote(noteName) {
+            initAudio();
+            const freq = noteFrequencies[noteName];
+            if (!freq) return;
+
+            // Create Oscillator & Gain nodes for smooth sound
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            // Warm sine/triangle synth tone blend
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            // Envelope (Attack & Decay)
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 0.03);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
+
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 1.2);
+
+            // Visual feedback + particle effect
+            spawnFloatingNote(noteName);
+        }
+
+        // Spawn visual music note particle
+        function spawnFloatingNote(noteName) {
+            const keys = document.querySelectorAll(`[data-note="${noteName}"]`);
+            if (keys.length === 0) return;
+
+            const keyElem = keys[0];
+            const rect = keyElem.getBoundingClientRect();
+
+            const noteElem = document.createElement('div');
+            noteElem.className = 'floating-note font-heading';
+            const icons = ['🎵', '🎶', '✨', '🎼', '🎹'];
+            noteElem.innerText = icons[Math.floor(Math.random() * icons.length)];
+
+            noteElem.style.left = `${rect.left + rect.width / 2 - 12}px`;
+            noteElem.style.top = `${rect.top}px`;
+
+            document.body.appendChild(noteElem);
+
+            setTimeout(() => {
+                noteElem.remove();
+            }, 3000);
+        }
+
+        // Play Chord FX for brand clicks
+        function playMagicChord() {
+            playNote('C4');
+            setTimeout(() => playNote('E4'), 100);
+            setTimeout(() => playNote('G4'), 200);
+            setTimeout(() => playNote('C5'), 300);
+        }
+
+        // Automatic Song Player Demo
+        function playSongDemo(notesArray) {
+            notesArray.forEach((note, index) => {
+                setTimeout(() => {
+                    playNote(note);
+                    // Add active class temporarily to key element
+                    const keyElem = document.querySelector(`[data-note="${note}"]`);
+                    if (keyElem) {
+                        keyElem.classList.add('active');
+                        setTimeout(() => keyElem.classList.remove('active'), 250);
+                    }
+                }, index * 400);
+            });
+        }
+
+        /* GUIDED PIANO PRACTICE */
+        let guidedPractice = null;
+
+        function startGuidedPractice(notesArray) {
+            guidedPractice = {
+                notes: notesArray,
+                index: 0
+            };
+
+            const manualNotes = document.querySelectorAll('.manual-note');
+            const status = document.getElementById('learningStatus');
+
+            document.querySelectorAll('.learning-active').forEach(key => key.classList.remove('learning-active'));
+            manualNotes.forEach(note => note.classList.remove('current'));
+            showGuidedNote();
+        }
+
+        function showGuidedNote() {
+            if (!guidedPractice) return;
+
+            const { notes, index } = guidedPractice;
+            const manualNotes = document.querySelectorAll('.manual-note');
+            const status = document.getElementById('learningStatus');
+
+            document.querySelectorAll('.learning-active').forEach(key => key.classList.remove('learning-active'));
+            manualNotes.forEach(note => note.classList.remove('current'));
+
+            if (index >= notes.length) {
+                guidedPractice = null;
+                status.textContent = '¡Excelente! Has terminado la secuencia.';
+                return;
+            }
+
+            const noteName = notes[index];
+            const pianoKey = document.querySelector(`[data-note="${noteName}"]`);
+            const manualNote = manualNotes[index];
+            const keyboardKey = findKeyboardKey(noteName);
+
+            if (pianoKey) pianoKey.classList.add('learning-active');
+            if (manualNote) manualNote.classList.add('current');
+            status.textContent = `Ahora toca la tecla ${keyboardKey.toUpperCase()}`;
+        }
+
+        function handleGuidedNote(noteName) {
+            if (!guidedPractice) return;
+
+            const expectedNote = guidedPractice.notes[guidedPractice.index];
+            const expectedKey = document.querySelector(`[data-note="${expectedNote}"]`);
+            const status = document.getElementById('learningStatus');
+
+            if (noteName !== expectedNote) {
+                status.textContent = `Casi. Necesitas tocar la tecla ${findKeyboardKey(expectedNote).toUpperCase()}`;
+                if (expectedKey) {
+                    expectedKey.classList.remove('learning-error');
+                    void expectedKey.offsetWidth;
+                    expectedKey.classList.add('learning-error');
+                }
+                return;
+            }
+
+            if (expectedKey) {
+                expectedKey.classList.remove('learning-active');
+                expectedKey.classList.add('learning-success');
+                setTimeout(() => expectedKey.classList.remove('learning-success'), 300);
+            }
+
+            const currentManualNote = document.querySelectorAll('.manual-note')[guidedPractice.index];
+            if (currentManualNote) currentManualNote.classList.remove('current');
+
+            guidedPractice.index += 1;
+            showGuidedNote();
+        }
+
+        function findKeyboardKey(noteName) {
+            return Object.keys(keyboardMapping).find(key => keyboardMapping[key] === noteName) || '';
+        }
+
+        /* AMBIENT BACKGROUND MUSIC SIMULATOR */
+        let ambientInterval = null;
+        let isAmbientPlaying = false;
+
+        function toggleAmbientMusic() {
+            initAudio();
+            const btnIcon = document.getElementById('ambientIcon');
+
+            if (isAmbientPlaying) {
+                clearInterval(ambientInterval);
+                isAmbientPlaying = false;
+                btnIcon.className = 'fa-solid fa-volume-xmark text-lg';
+            } else {
+                isAmbientPlaying = true;
+                btnIcon.className = 'fa-solid fa-volume-high text-lg animate-pulse';
+
+                // Arpeggio pattern
+                const ambientNotes = ['C4', 'E4', 'G4', 'B4', 'C5', 'A4', 'F4', 'D4'];
+                let step = 0;
+                ambientInterval = setInterval(() => {
+                    playNote(ambientNotes[step % ambientNotes.length]);
+                    step++;
+                }, 600);
+            }
+        }
+
+        /* KEYBOARD & MOUSE EVENT LISTENERS FOR PIANO */
+        document.addEventListener('DOMContentLoaded', () => {
+            const keys = document.querySelectorAll('[data-note]');
+
+            keys.forEach(key => {
+                const note = key.getAttribute('data-note');
+
+                // Mouse / Touch Events
+                key.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    playNote(note);
+                    handleGuidedNote(note);
+                    key.classList.add('active');
+                });
+
+                key.addEventListener('mouseup', () => {
+                    key.classList.remove('active');
+                });
+
+                key.addEventListener('mouseleave', () => {
+                    key.classList.remove('active');
+                });
+
+                key.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    playNote(note);
+                    handleGuidedNote(note);
+                    key.classList.add('active');
+                });
+
+                key.addEventListener('touchend', () => {
+                    key.classList.remove('active');
+                });
+            });
+
+            // Hardware Keyboard Events
+            window.addEventListener('keydown', (e) => {
+                if (e.repeat) return; // Prevent continuous trigger on key hold
+                const keyChar = e.key.toLowerCase();
+                if (keyboardMapping[keyChar]) {
+                    const note = keyboardMapping[keyChar];
+                    playNote(note);
+                    handleGuidedNote(note);
+                    const keyElem = document.querySelector(`[data-key="${keyChar}"]`);
+                    if (keyElem) keyElem.classList.add('active');
+                }
+            });
+
+            window.addEventListener('keyup', (e) => {
+                const keyChar = e.key.toLowerCase();
+                if (keyboardMapping[keyChar]) {
+                    const keyElem = document.querySelector(`[data-key="${keyChar}"]`);
+                    if (keyElem) keyElem.classList.remove('active');
+                }
+            });
+        });
+
+        /* MOBILE HAMBURGER MENU */
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileNav = document.getElementById('mobileNav');
+
+        menuToggle.addEventListener('click', () => {
+            const isOpen = mobileNav.classList.toggle('open');
+            const icon = menuToggle.querySelector('i');
+
+            menuToggle.setAttribute('aria-expanded', isOpen);
+            menuToggle.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+            icon.className = isOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+        });
+
+        document.querySelectorAll('#mobileNav .nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNav.classList.remove('open');
+                menuToggle.setAttribute('aria-expanded', 'false');
+                menuToggle.setAttribute('aria-label', 'Abrir menú');
+                menuToggle.querySelector('i').className = 'fa-solid fa-bars';
+            });
+        });
+
+        /* QUIZ GAME LOGIC */
+        let quizAnswers = {};
+
+        function answerQuiz(step, value) {
+            quizAnswers[step] = value;
+            document.getElementById(`q${step}`).classList.add('hidden');
+
+            if (step < 3) {
+                document.getElementById(`q${step + 1}`).classList.remove('hidden');
+            }
+        }
+
+        function finishQuiz(resultType) {
+            document.getElementById('q3').classList.add('hidden');
+            const resultBox = document.getElementById('quizResult');
+            resultBox.classList.remove('hidden');
+
+            const title = document.getElementById('resultTitle');
+            const desc = document.getElementById('resultDesc');
+            const emoji = document.getElementById('resultEmoji');
+
+            if (resultType === 'HitMaker') {
+                emoji.innerText = '⭐';
+                title.innerText = 'Pianista Hit-Maker';
+                desc.innerText = '¡Tienes una intuición increíble para las canciones pegajosas! En el curso aprenderás a tocar tus temas Pop y virales favoritos en cuestión de días.';
+            } else if (resultType === 'OidoMagico') {
+                emoji.innerText = '🎧';
+                title.innerText = 'Pianista de Oído Mágico';
+                desc.innerText = 'Tu superpoder es escuchar y replicar. Con nuestros módulos de entrenamiento auditivo, podrás sacar cualquier canción sin depender de partituras.';
+            } else if (resultType === 'Compositor') {
+                emoji.innerText = '🎬';
+                title.innerText = 'Creador de Soundtracks';
+                desc.innerText = 'Te encanta la música de películas y videojuegos. Te enseñaremos los acordes mágicos del cine para que crees tus propias composiciones.';
+            } else {
+                emoji.innerText = '⚡';
+                title.innerText = 'Virtuoso Veloz';
+                desc.innerText = 'Buscas agilidad, técnica y sonido potente. Nuestro sistema de retos de velocidad desarrollará tu destreza con las dos manos.';
+            }
+
+            playMagicChord();
+        }
+
+        function resetQuiz() {
+            document.getElementById('quizResult').classList.add('hidden');
+            document.getElementById('q1').classList.remove('hidden');
+            quizAnswers = {};
+        }
+
+        /* ACCORDION MODULES TOGGLE */
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(`icon-${id}`);
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        /* ENROLLMENT ACTION */
+        function triggerEnrollment() {
+            playMagicChord();
+            // Message box replacing alert
+            const msgBox = document.createElement('div');
+            msgBox.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm';
+            msgBox.innerHTML = `
+                <div class="bg-white border-4 border-brandDark rounded-3xl p-8 max-w-md w-full text-center shadow-2xl relative">
+                    <div class="text-6xl mb-3">🎉</div>
+                    <h3 class="text-3xl font-heading text-brandDark mb-2">¡Casi listo!</h3>
+                    <p class="text-slate-600 font-semibold mb-6">Te estamos redirigiendo a la pasarela de pago segura con el 50% de descuento aplicado.</p>
+                    <button onclick="this.parentElement.parentElement.remove()" class="bg-brandYellow hover:bg-yellow-300 text-brandDark font-heading px-6 py-3 rounded-xl border-2 border-brandDark w-full text-lg">
+                        ¡Entendido, vamos! 🎹
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(msgBox);
+        }
+    </script>
+</body>
+
+</html>
